@@ -84,25 +84,22 @@ export default class OSDP {
         var arrayPt = values.split(';');
         arrayPt.forEach((element, index, arr) => {
             var elt = element;
+            elt = elt.replace('POINT', '').replace(/\( */g, '[').replace(/ *\)/g, ']');
             elt = elt.trim();
-            elt = elt.replace('POINT', '').replace('(', '[').replace(')', ']');
-            elt = elt.replace(" ",","); 
+            elt = elt.replace(/ +/g,', '); 
             arr[index] = elt;
         });
         return "["+arrayPt+"]";
     }
 
     inputParsePolygons(values:string):any{
-        debugger
         var arrayPoly = values.split(';');
         arrayPoly.forEach((element, index, arr) => {
-            debugger
             var elt = element;
+            elt = elt.replace('POLYGON', '').replace(/\( *\( */g,'[[').replace(/ *\) *\)/g, ']]');
             elt = elt.trim();
-            elt = elt.replace('POLYGON', '').replace('((', '[[').replace('))', ']]');
-            elt = elt.replace(",", "];[");
-            elt = elt.replace(" ",",");
-            elt = elt.replace(";",","); 
+            elt = elt.replace(/, */g, '],[');
+            elt = elt.replace(/ +/g,', ');
             arr[index] = elt;
         });
         return "["+arrayPoly+"]";
@@ -142,9 +139,8 @@ export default class OSDP {
     }
 
     addPolygonsGeometry(mapId: string, values: string): void {
-        debugger
         const input = this.inputParsePolygons(values);
-        const poly1 = new (<any>window).RAMP.GEO.Polygon(201, JSON.parse(values));
+        const poly1 = new (<any>window).RAMP.GEO.Polygon(201, JSON.parse(input));
         const polyAll = new (<any>window).RAMP.GEO.MultiPolygon(206, [poly1]);
         const myMap = (<any>window).RAMP.mapById(mapId);
         const icon = 'M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 4.5 6 11 6 11s6-6.5 6-11zm-8 0c0-1.1.9-2 2-2s2 .9 2 2-.89 2-2 2c-1.1 0-2-.9-2-2zM5 20v2h14v-2H5z';
@@ -158,7 +154,7 @@ export default class OSDP {
 
         const polygons = [];
         graphicsOSDP.addGeometry([polyAll]);
-        this.zoomPoly(mapId, polyAll.polygonArray);
+        this.zoomPoly(mapId, values);
     }
 
     removeGeometries(mapId: string) {
@@ -205,19 +201,22 @@ export default class OSDP {
     }
 
     zoomPt(mapId: string, value: string): void {
-        debugger
+        var input = this.inputParsePoints(value)
         const myMap = (<any>window).RAMP.mapById(mapId);
         const ramp = (<any>window).RAMP;
-        var ptcoords = JSON.parse(value)[0];
+        var ptcoords = JSON.parse(input)[0];
         const pt = new ramp.GEO.XY(parseFloat(ptcoords[0]), parseFloat(ptcoords[1]));
         myMap.zoom = 13;
         myMap.setCenter(pt);
     }
 
-    zoomPoly(mapId: string, value: any): void {
+    zoomPoly(mapId: string, value: string): void {
+        const input = this.inputParsePolygons(value);
+        const poly1 = new (<any>window).RAMP.GEO.Polygon(201, JSON.parse(input));
+        const polyAll = new (<any>window).RAMP.GEO.MultiPolygon(206, [poly1]);
         const myMap = (<any>window).RAMP.mapById(mapId);
         const ramp = (<any>window).RAMP;
-        const polyarray = value;
+        const polyarray =  polyAll.polygonArray;
         const ext_x = [];
         const ext_y = [];
         const coords = polyarray[0].ringArray[0].pointArray;
@@ -293,7 +292,6 @@ export default class OSDP {
         var strarray = values;
         var errors = [];
 
-        debugger
         if (!ck_strarray.test(strarray)) {
             errors[errors.length] = "You must enter a valid array of point: [123.55,321.66]";
         }

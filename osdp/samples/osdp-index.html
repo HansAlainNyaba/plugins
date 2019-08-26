@@ -56,12 +56,12 @@
 
     <div>
         <!-- zoom lat\long section -->
-        <input type="text" id="zoomPt" name="zoomPt" value="[-112.92, 53.8]"></input>
+        <input type="text" id="zoomPt" name="zoomPt" value="POINT(-112.92 53.8)"></input>
         <button type="button" onclick="zoomPt()">Zoom Lat\Long</button>
 
         <!-- zoom polygon section section -->
         <input type="text" id="zoomPoly" name="zoomPoly"
-            value="[[-128.75, 53.8],[-128.75, 53.92],[-112.92, 53.92],[-112.92, 53.8],[-128.75, 53.8]]"></input>
+            value="POLYGON((-128.75 53.8,-128.75 53.92,-112.92 53.92,-112.92 53.8,-128.75 53.8))"></input>
         <button type="button" onclick="zoomPoly()">Zoom Polygon</button>
     </div>
 
@@ -118,7 +118,7 @@
         <datalist id="polygonlist">
             <option value="POLYGON((-74 45,-74 46,-71 46,-71 45,-74 45))">
             <option
-                value="[[[-77.19,44.93],[-76.86,47.219],[-71.43,47.769],[-72.971,44.556],[-77.19,44.93]],[[-74, 45], [-74, 46], [-71, 46], [-71, 45], [-74, 45]]]">
+                value="POLYGON((-77.19  44.93, -76.86 47.219, -71.43   47.769, -72.971 44.556,-77.19 44.93)); POLYGON((-74 45, -74 46, -71 46, -71 45, -74 45))">
         </datalist>
         <button type="button"
             onclick="window.osdp.addPolygonsGeometry('mapOSDP', document.getElementById('addPolygon').value)">Add
